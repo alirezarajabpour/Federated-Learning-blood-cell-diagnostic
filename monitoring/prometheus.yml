@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+      
+  - job_name: 'fl-clients'
+    # This tells Prometheus to scrape the metrics from each of your client containers
+    static_configs:
+      - targets: 
+        - 'client-0:8001'
+        - 'client-1:8002'
+        - 'client-2:8003'
+        - 'client-3:8004'
+        # - 'client-4:8005'
+        # - 'client-5:8006'
+        # Add more clients here if you run more than 4

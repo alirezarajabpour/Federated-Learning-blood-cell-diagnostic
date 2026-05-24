@@ -1,0 +1,185 @@
+version: "3.9"
+
+x-client-template: &client-template
+  build: .
+  depends_on:
+    - server
+  # environment:
+  #   - OMP_NUM_THREADS=1
+  #   - MKL_NUM_THREADS=1
+  volumes:
+    - ./data:/app/data
+  deploy:
+    resources:
+      # limits:
+      #   memory: '1G'
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+services:
+  server:
+    build: .
+    container_name: server
+    command: python -u server.py --strategy map
+    ports:
+      - "8080:8080"
+    # volumes:
+    #   - ./data:/app/data
+    volumes:
+      - .:/app
+    depends_on:
+      - mlflow
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  client-0:
+    <<: *client-template
+    container_name: client-0
+    command: sh -c "sleep 20 && python -u client.py --client-id 0"
+    ports:
+      - "8001:8001"
+  client-1:
+    <<: *client-template
+    container_name: client-1
+    command: sh -c "sleep 20 && python -u client.py --client-id 1"
+    ports:
+      - "8002:8002"
+  client-2:
+    <<: *client-template
+    container_name: client-2
+    command: sh -c "sleep 20 && python -u client.py --client-id 2"
+    ports:
+      - "8003:8003"
+  client-3:
+    <<: *client-template
+    container_name: client-3
+    command: sh -c "sleep 20 && python -u client.py --client-id 3"
+    ports:
+      - "8004:8004"
+  # client-4:
+  #   <<: *client-template
+  #   container_name: client-4
+  #   command: sh -c "sleep 20 && python -u client.py --client-id 4"
+  #   ports:
+  #     - "8005:8005"
+  # client-5:
+  #   <<: *client-template
+  #   container_name: client-5
+  #   command: sh -c "sleep 20 && python -u client.py --client-id 5"
+  #   ports:
+  #     - "8006:8006"
+  # client-6:
+  #   <<: *client-template
+  #   command: python -u client.py --client-id 6
+  # client-7:
+  #   <<: *client-template
+  #   command: python -u client.py --client-id 7
+  # client-8:
+  #   <<: *client-template
+  #   command: python -u client.py --client-id 8
+  # client-9:
+  #   <<: *client-template
+  #   command: python -u client.py --client-id 9
+
+  # backend:
+  #   build:
+  #     context: . # Use the main Dockerfile
+  #   command: python -u backend/app.py
+  #   volumes:
+  #     - ./backend:/app/backend
+  #     - ./final_global_model.pth:/app/final_global_model.pth
+  #   depends_on:
+  #     - server # Wait for the server to finish training and save the model -- when its get end **********
+
+  # --- NEW: Frontend UI Service ---
+  # frontend:
+  #   build:
+  #     context: ./frontend # Use the frontend's Dockerfile
+  #   # ports:
+  #   #   - "80:80" # This will be our main app URL
+  #   ports:
+  #     - "3001:3000" # React development server runs on port 3000
+  #   volumes:
+  #     # This is the key part:
+  #     # It mounts your local `frontend` folder into the container.
+  #     # The entrypoint.sh script will create the files in this mounted volume.
+  #     - ./frontend:/app
+
+  #   depends_on:
+  #     - backend
+
+  # siloed-experiment:
+  #   build: .
+  #   container_name: siloed_xp
+  #   command: python -u siloed_training.py
+  #   volumes:
+  #     - ./data:/app/data
+  #     - ./mlruns:/app/mlruns
+  #   # environment:
+  #   #   - OMP_NUM_THREADS=1
+  #   #   - MKL_NUM_THREADS=1
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: all
+  #             capabilities: [gpu]
+  #   depends_on:
+  #     - mlflow
+
+
+  mlflow:
+    # Build the image from the mlflow_service directory
+    build: ./mlflow_service
+    container_name: MLflow
+    ports:
+      - "5000:5000"
+    deploy:
+      resources:
+        limits:
+          memory: '1G'
+    volumes:
+      # This volume mapping is still necessary to save your data
+      - ./mlruns:/mlruns
+
+  prometheus:
+    image: docker.arvancloud.ir/prom/prometheus:v2.47.2
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - client-0
+      - client-1
+
+  grafana:
+    image: docker.arvancloud.ir/grafana/grafana:10.2.2
+    container_name: grafana
+    volumes:
+      - ./monitoring/grafana_provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "3000:3000"
+    depends_on: [prometheus]
+
+  ui:
+    build: . # It can reuse the same environment as the server and clients
+    container_name: FL_UI
+    command: streamlit run app.py --server.port 8501
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount the whole directory so it can find app.py, model.py, and the saved model
+      - .:/app
+    depends_on:
+      - mlflow # The UI needs to talk to mlflow
+      - server # The UI needs the model saved by the server

@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/560869927266598314/f9b93c9cb5df49168bd09d863147a0da/artifacts
+deleted_time: 1754871326673
+end_time: 1754862448834
+entry_point_name: ''
+experiment_id: '560869927266598314'
+lifecycle_stage: deleted
+run_id: f9b93c9cb5df49168bd09d863147a0da
+run_name: Siloed_Client_0
+run_uuid: f9b93c9cb5df49168bd09d863147a0da
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1754862416090
+status: 3
+tags: []
+user_id: root

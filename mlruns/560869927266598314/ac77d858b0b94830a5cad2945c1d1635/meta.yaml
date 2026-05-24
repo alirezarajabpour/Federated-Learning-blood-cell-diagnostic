@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/560869927266598314/ac77d858b0b94830a5cad2945c1d1635/artifacts
+end_time: 1754961138501
+entry_point_name: ''
+experiment_id: '560869927266598314'
+lifecycle_stage: active
+run_id: ac77d858b0b94830a5cad2945c1d1635
+run_name: Run_FEDAVG
+run_uuid: ac77d858b0b94830a5cad2945c1d1635
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1754961019395
+status: 3
+tags: []
+user_id: root
