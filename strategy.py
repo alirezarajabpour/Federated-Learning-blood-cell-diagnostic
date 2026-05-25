@@ -33,37 +33,6 @@ class MapStrategy(fl.server.strategy.FedAvg):
 
         return super().configure_evaluate(server_round, parameters, client_manager)
 
-    # def aggregate_fit(
-    #     self, server_round: int, results: List[Tuple[ClientProxy, FitRes]], failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]]
-    # ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
-    #     """Aggregate fit results and update client HPMs."""
-    #     # Get the aggregated parameters from the parent class
-    #     aggregated_parameters, aggregated_metrics = super().aggregate_fit(server_round, results, failures)
-
-    #     # --- NEW: Save the latest aggregated parameters ---
-    #     if aggregated_parameters is not None:
-    #         self.final_parameters = aggregated_parameters
-    #     # --------------------------------------------------
-
-    #     # Now, update the HPM for each client that returned a successful result
-    #     for client_proxy, fit_res in results:
-    #         if "logical_id" not in fit_res.metrics:
-    #             continue
-
-    #         logical_cid = str(fit_res.metrics.pop("logical_id"))
-    #         p_k_t_state_dict_bytes = fit_res.metrics.pop("p_k_t_state_dict")
-    #         p_k_t_state_dict_numpy = pickle.loads(p_k_t_state_dict_bytes)
-
-    #         old_hpm_state = self.client_hpms.get(logical_cid)
-    #         if old_hpm_state is None:
-    #             self.client_hpms[logical_cid] = p_k_t_state_dict_numpy
-    #         else:
-    #             self.client_hpms[logical_cid] = update_hpm_state_dict(
-    #                 old_hpm_state, p_k_t_state_dict_numpy, self.hpm_beta
-    #             )
-
-    #     return aggregated_parameters, aggregated_metrics
-
     def aggregate_fit(
         self, server_round: int, results: List[Tuple[ClientProxy, FitRes]], failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]]
     ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:

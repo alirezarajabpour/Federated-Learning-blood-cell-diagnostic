@@ -135,17 +135,10 @@ def main():
         )
     # -----------------------------------------------
 
-    # fl.server.start_server(
-    #     server_address="0.0.0.0:8080",
-    #     config=fl.server.ServerConfig(num_rounds=NUM_ROUNDS),
-    #     strategy=strategy,
-    # )
-
     # --- MLflow Integration ---
     mlflow.set_tracking_uri("http://mlflow:5000")
     mlflow.set_experiment("MAP Federated Learning")
 
-    # with mlflow.start_run():
     with mlflow.start_run(run_name=f"Run_{args.strategy.upper()}"):
         print("Starting MLflow Run...")
 
@@ -187,7 +180,6 @@ def main():
 
             final_state_dict = {k: torch.tensor(v) for k, v in zip(model.state_dict().keys(), final_parameters_ndarrays)}
 
-            # Save the model
             torch.save(final_state_dict, MODEL_PATH)
             print(f"Final global model saved to {MODEL_PATH}")
             mlflow.log_artifact(MODEL_PATH)

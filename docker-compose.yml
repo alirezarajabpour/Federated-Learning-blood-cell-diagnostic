@@ -89,33 +89,6 @@ services:
   #   <<: *client-template
   #   command: python -u client.py --client-id 9
 
-  # backend:
-  #   build:
-  #     context: . # Use the main Dockerfile
-  #   command: python -u backend/app.py
-  #   volumes:
-  #     - ./backend:/app/backend
-  #     - ./final_global_model.pth:/app/final_global_model.pth
-  #   depends_on:
-  #     - server # Wait for the server to finish training and save the model -- when its get end **********
-
-  # --- NEW: Frontend UI Service ---
-  # frontend:
-  #   build:
-  #     context: ./frontend # Use the frontend's Dockerfile
-  #   # ports:
-  #   #   - "80:80" # This will be our main app URL
-  #   ports:
-  #     - "3001:3000" # React development server runs on port 3000
-  #   volumes:
-  #     # This is the key part:
-  #     # It mounts your local `frontend` folder into the container.
-  #     # The entrypoint.sh script will create the files in this mounted volume.
-  #     - ./frontend:/app
-
-  #   depends_on:
-  #     - backend
-
   # siloed-experiment:
   #   build: .
   #   container_name: siloed_xp
@@ -135,7 +108,6 @@ services:
   #             capabilities: [gpu]
   #   depends_on:
   #     - mlflow
-
 
   mlflow:
     # Build the image from the mlflow_service directory
@@ -172,14 +144,13 @@ services:
     depends_on: [prometheus]
 
   ui:
-    build: . # It can reuse the same environment as the server and clients
+    build: .
     container_name: FL_UI
     command: streamlit run app.py --server.port 8501
     ports:
       - "8501:8501"
     volumes:
-      # Mount the whole directory so it can find app.py, model.py, and the saved model
       - .:/app
     depends_on:
-      - mlflow # The UI needs to talk to mlflow
-      - server # The UI needs the model saved by the server
+      - mlflow
+      - server

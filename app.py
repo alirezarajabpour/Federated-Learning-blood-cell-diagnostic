@@ -3,9 +3,9 @@ from PIL import Image
 import torch
 from torchvision import transforms
 import os
-import time
+# import time
 import pandas as pd
-import numpy as np
+# import numpy as np
 
 from model import get_model
 from dataset import CLASS_NAMES, prepare_client_datasets, load_data
@@ -45,7 +45,7 @@ train_dataset, _, num_classes = load_data()
 _, client_class_map = prepare_client_datasets(train_dataset, num_classes)
 
 hospital_names = [
-    "St. Jude's Research Hospital", 
+    "St. Jude's Research Hospital",
     "General Hospital of Hematology",
     "The Institute of Cellular Pathology",
     "Mercy Health Center",
