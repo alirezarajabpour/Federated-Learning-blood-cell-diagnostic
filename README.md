@@ -312,7 +312,7 @@ The MAP strategy demonstrated significant improvements compared to standard FedA
 ### Client & Server Logs
 
 ![Client & Server Logs](results_screenshots/server_log_clients_acc.png)
-![Client & Server Logs](log_2.png)
+![Client & Server Logs](results_screenshots/log_2.png)
 
 ---
 
