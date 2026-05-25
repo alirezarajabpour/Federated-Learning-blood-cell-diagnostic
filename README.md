@@ -96,6 +96,9 @@ Benefits:
 - Better global model convergence
 - Reduced class bias
 
+Hyperparameter:
+- rs_alpha
+
 ### Hyper-Personalized Model (HPM)
 
 Each client maintains a personalized historical model.
@@ -108,6 +111,10 @@ Benefits:
 Knowledge distillation is used between:
 - Teacher model: HPM
 - Student model: Current local model
+
+Hyperparameters:
+- hpm_beta
+- kd_lambda
 
 ---
 
@@ -272,31 +279,40 @@ The MAP strategy demonstrated significant improvements compared to standard FedA
 
 ### MLflow Experiment Tracking
 
-![MLflow](screenshots/mlflow-dashboard.png)
+![MLflow](results_screenshots/mlflow.png)
+![MLflow](results_screenshots/mlflow_metrics_&_data_distribution.png)
 
 ---
 
 ### Grafana Monitoring Dashboard
 
-![Grafana](screenshots/grafana-dashboard.png)
+![Grafana](results_screenshots/grafana_resources.png)
 
 ---
 
 ### Streamlit Inference UI
 
-![UI](screenshots/streamlit-ui.png)
+![UI](results_screenshots/UI_2.png)
 
 ---
 
-### Federated Training Results
+### Federated Training Results (Hyperparameters Comprision)
 
-![Training](screenshots/training-results.png)
+![Results](results_screenshots/RS_Alpha_compare.png)
+![Results](results_screenshots/lambda_beta_compare_tests.png)
 
 ---
 
-### Confusion Matrix
+### 6 Clients Confusion Matrix
 
-![Confusion Matrix](screenshots/confusion-matrix.png)
+![Confusion Matrix](results_screenshots/6client_kd_lambda_0.1_beta_0.5.png)
+
+---
+
+### Client & Server Logs
+
+![Client & Server Logs](results_screenshots/server_log_clients_acc.png)
+![Client & Server Logs](logs_2.png)
 
 ---
 
@@ -317,19 +333,6 @@ Balancing global aggregation and local specialization was one of the main challe
 ### Distributed Monitoring
 
 Building reproducible monitoring and orchestration pipelines inside Dockerized environments required careful infrastructure design.
-
----
-
-## Future Improvements
-
-- Differential Privacy integration
-- Secure Aggregation
-- Kubernetes deployment
-- GPU scheduling optimization
-- Transformer-based architectures
-- FedProx and FedBN comparison
-- Multi-node distributed deployment
-- CI/CD automation
 
 ---
 
